@@ -202,6 +202,28 @@ public class DoctorController {
         }
     }
 
+// Doctor Rate
+    @GET
+    @Path("/rate")
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, "text/csv"})
+    public Response getRateDoctors(@QueryParam("consultation_rating") int consultation_rating) {
+        try {
+            ArrayList<Doctor> doctors = doctorDao.getRateDoctors(consultation_rating);
+
+            GenericEntity<ArrayList<Doctor>> doctor = new GenericEntity<ArrayList<Doctor>>(doctors) {
+            };
+            if (headers.getAcceptableMediaTypes().contains(MediaType.valueOf(MediaType.APPLICATION_XML))) {
+                return Response.ok(doctor).type(MediaType.APPLICATION_XML).build();
+            } else if (headers.getAcceptableMediaTypes().contains(MediaType.valueOf("text/csv"))) {
+                return Response.ok(doctor).type("text/csv").build();
+            } else {
+                return Response.ok(doctor, MediaType.APPLICATION_JSON).build();
+            }
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 //    @GET
 //    @Path("/available")
 //    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, "text/csv"})

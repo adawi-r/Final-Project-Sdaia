@@ -47,6 +47,11 @@ public class Consultation {
         this.consultation_rating = consultation_rating;
     }
 
+    public Consultation(int consultation_rating, int doctor_id) {
+        this.consultation_rating = consultation_rating;
+        this.doctor_id = doctor_id;
+    }
+
     public Consultation(ResultSet rs) throws SQLException {
         consultation_id = rs.getInt("consultation_id");
         doctor_id = rs.getInt("doctor_id");

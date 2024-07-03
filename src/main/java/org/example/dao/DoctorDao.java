@@ -2,6 +2,7 @@ package org.example.dao;
 
 import org.example.db.MCPConnection;
 import org.example.dto.DoctorFilterDto;
+import org.example.models.Consultation;
 import org.example.models.Doctor;
 
 import java.sql.*;
@@ -25,9 +26,9 @@ public class DoctorDao {
     private static final String LOG_IN_DOCTOR = "select * from DOCTORS where doctor_email = ? AND doctor_password = ?";
 
     private static final String UPDATE_DOCTOR = "update DOCTORS set doctor_name = ?, doctor_specialty = ?, doctor_email = ?, doctor_password = ?, doctor_phone = ? where doctor_id = ?";
-//    private static final String DELETE_DOCTOR = "delete from DOCTORS  where doctor_id = ?";
+    //    private static final String DELETE_DOCTOR = "delete from DOCTORS  where doctor_id = ?";
     private static final String SCHEDULE_AVAILABILITY_BY_DOCTOR = "SELECT doctor_id, doctor_name, doctor_specialty FROM DOCTORS WHERE doctor_id in (select distinct (doctor_id) from SCHEDULES where SCHEDULES.schedule_is_available = ?)";
-
+    private static final String RATE_BY_DOCTOR = "SELECT doctor_id, doctor_name, doctor_specialty FROM DOCTORS WHERE doctor_id in (select distinct (doctor_id) from  CONSULTATIONS where CONSULTATIONS.consultation_rating = ?)";
 
 
 //    //SELECT_ALL_DOCTOR
@@ -45,17 +46,16 @@ public class DoctorDao {
 //    }
 //
 
-// SELECT_ONE_DOCTOR
+    // SELECT_ONE_DOCTOR
     public Doctor selectDoctorById(int doctor_id) throws SQLException, ClassNotFoundException {
 //        Class.forName("org.sqlite.JDBC");
         Connection conn = MCPConnection.getConn();
         PreparedStatement st = conn.prepareStatement(SELECT_ONE_DOCTOR);
         st.setInt(1, doctor_id);
         ResultSet rs = st.executeQuery();
-        if(rs.next()) {
+        if (rs.next()) {
             return new Doctor(rs);
-        }
-        else {
+        } else {
             return null;
         }
     }
@@ -65,20 +65,17 @@ public class DoctorDao {
     public ArrayList<Doctor> selectAllDocs(DoctorFilterDto filter) throws SQLException, ClassNotFoundException {
 //        Class.forName("org.sqlite.JDBC");
         Connection conn = MCPConnection.getConn();
-        PreparedStatement st ;
-        if(filter.getDoctor_id() != null ) {
+        PreparedStatement st;
+        if (filter.getDoctor_id() != null) {
             st = conn.prepareStatement(SELECT_ONE_DOCTOR);
             st.setInt(1, filter.getDoctor_id());
-        }
-        else if(filter.getDoctor_name() != null) {
+        } else if (filter.getDoctor_name() != null) {
             st = conn.prepareStatement(SELECT_ONE_BY_NAME);
-            st.setString(1,filter.getDoctor_name());
-        }
-        else if(filter.getDoctor_specialty() != null) {
+            st.setString(1, filter.getDoctor_name());
+        } else if (filter.getDoctor_specialty() != null) {
             st = conn.prepareStatement(SELECT_ONE_BY_SPECIALTY);
             st.setString(1, filter.getDoctor_specialty());
-        }
-        else {
+        } else {
             st = conn.prepareStatement(SELECT_ALL_DOCTOR);
         }
         ResultSet rs = st.executeQuery();
@@ -115,13 +112,13 @@ public class DoctorDao {
         st.setString(2, doctor_password);
 
         ResultSet rs = st.executeQuery();
-        if(rs.next()) {
+        if (rs.next()) {
             return new Doctor(rs);
         }
         return null;
     }
 
-//    update
+    //    update
     public void updateDoctor(Doctor d) throws SQLException, ClassNotFoundException {
 //        Class.forName("org.sqlite.JDBC");
         Connection conn = MCPConnection.getConn();
@@ -145,7 +142,7 @@ public class DoctorDao {
 
         st.setBoolean(1, schedule_is_available);
 
-        try(ResultSet resultSet = st.executeQuery()) {
+        try (ResultSet resultSet = st.executeQuery()) {
             while (resultSet.next()) {
                 Doctor doctor = new Doctor(
                         resultSet.getInt("doctor_id"),
@@ -159,7 +156,30 @@ public class DoctorDao {
         return doctors;
     }
 
-    // doctor info based on availablity
+    // doctor info based on RATE
+    public ArrayList<Doctor> getRateDoctors(int consultation_rating) throws SQLException, ClassNotFoundException {
+        ArrayList<Doctor> doctors = new ArrayList<>();
+
+        Connection conn = MCPConnection.getConn();
+        PreparedStatement st = conn.prepareStatement(RATE_BY_DOCTOR);
+
+        st.setInt(1, consultation_rating);
+
+        try (ResultSet resultSet = st.executeQuery()) {
+            while (resultSet.next()) {
+                Doctor doctor = new Doctor(
+                        resultSet.getInt("doctor_id"),
+                        resultSet.getString("doctor_name"),
+                        resultSet.getString("doctor_specialty")
+                );
+                doctors.add(doctor);
+            }
+        }
+
+        return doctors;
+
+    }
+        // doctor info based on availablity
 //    public ArrayList<Doctor> getAvailableDoctors(boolean schedule_is_available) throws SQLException, ClassNotFoundException {
 //        ArrayList<Doctor> doctors = new ArrayList<>();
 //
@@ -185,7 +205,7 @@ public class DoctorDao {
 //    public void addSchedule(Schedule s) throws SQLException, ClassNotFoundException {
 //        Class.forName("org.sqlite.JDBC");
 //Connection conn = MCPConnection.getConn();
-    //        PreparedStatement st = conn.prepareStatement(INSERT_DOCTOR_SCHEDULE);
+        //        PreparedStatement st = conn.prepareStatement(INSERT_DOCTOR_SCHEDULE);
 //        st.setInt(1, s.getDoctor_id());
 //        st.setString(2, s.getSchedule_start_time().toString());
 //        st.setString(2, s.getSchedule_end_time().toString());
