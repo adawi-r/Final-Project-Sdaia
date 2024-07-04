@@ -11,7 +11,16 @@ public class ConsultationFilterDto {
     @QueryParam("pendingReq") LocalDateTime pendingRequest;
     @QueryParam("consultation_status") String consultation_status;
     @QueryParam("doctor_id") Integer doctor_id;
+    @QueryParam("patient_id") Integer patient_id;
 
+
+    public Integer getPatient_id() {
+        return patient_id;
+    }
+
+    public void setPatient_id(Integer patient_id) {
+        this.patient_id = patient_id;
+    }
 
     public Integer getDoctor_id() {
         return doctor_id;

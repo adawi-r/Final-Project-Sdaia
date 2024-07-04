@@ -6,7 +6,6 @@ import org.example.dao.ConsultationDao;
 import org.example.dao.DoctorDao;
 import org.example.dto.DoctorDto;
 import org.example.dto.DoctorFilterDto;
-import org.example.dto.ErrorMessage;
 import org.example.dto.RateDto;
 import org.example.exceptions.DataNotFoundException;
 import org.example.mappers.DoctorMapper;
@@ -15,7 +14,7 @@ import org.example.models.Doctor;
 import java.net.URI;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.stream.Collectors;
+
 
 @Path("/DOCTORS")
 public class DoctorController {
@@ -140,23 +139,23 @@ public class DoctorController {
         }
     }
 
-    @GET
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, "text/csv"})
-
-    public Response getDoctorByRate(@QueryParam("consultation_rating") int consultation_rating) {
-        ArrayList<Doctor> doctors = new ArrayList<>();
-        try {
-            ArrayList<RateDto> rateDtos = consultationDao.searchByRate(consultation_rating);
-            for (RateDto rateDto : rateDtos) {
-                doctors.add(doctorDao.selectDoctorById(rateDto.getDoctor_id()));
-            }
-
-            return Response.ok(doctors).build();
-            // return jobs;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
+//    @GET
+//    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, "text/csv"})
+//
+//    public Response getDoctorByRate(@QueryParam("consultation_rating") int consultation_rating) {
+//        ArrayList<Doctor> doctors = new ArrayList<>();
+//        try {
+//            ArrayList<RateDto> rateDtos = consultationDao.searchByRate(consultation_rating);
+//            for (RateDto rateDto : rateDtos) {
+//                doctors.add(doctorDao.selectDoctorById(rateDto.getDoctor_id()));
+//            }
+//
+//            return Response.ok(doctors).build();
+//            // return jobs;
+//        } catch (Exception e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
 
 
 //    @GET

@@ -29,35 +29,35 @@ public class ConsultationController {
     public ConsultationController() {
     }
 
-    @GET
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON,"text/csv"})
-    public Response getAllConsults(
-            //BeanParam hss object that contains more than on parameter
-            //نجمع كل البراميترز داخل الكلاس ConsultFilterDto ونبعث الاوبجت filter
-            @BeanParam ConsultationFilterDto filter ) throws SQLException, ClassNotFoundException {
-
-        try {
-            GenericEntity<ArrayList<Consultation>> consultation = new GenericEntity<ArrayList<Consultation>>(consultationDao.selectAllConsults(filter)) {};
-            if(headers.getAcceptableMediaTypes().contains(MediaType.valueOf(MediaType.APPLICATION_XML))) {
-                return Response
-                        .ok(consultation)
-                        .type(MediaType.APPLICATION_XML)
-                        .build();
+//    @GET
+//    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON,"text/csv"})
+//    public Response getAllConsults(
+//            //BeanParam hss object that contains more than on parameter
+//            //نجمع كل البراميترز داخل الكلاس ConsultFilterDto ونبعث الاوبجت filter
+//            @BeanParam ConsultationFilterDto filter ) throws SQLException, ClassNotFoundException {
 //
-            }else if(headers.getAcceptableMediaTypes().contains(MediaType.valueOf("text/csv"))) {
-                return Response
-                        .ok(consultation)
-                        .type("text/csv")
-                        .build();
-            }
-
-            return Response
-                    .ok(consultation, MediaType.APPLICATION_JSON)
-                    .build();
-        } catch (SQLException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-    }
+//        try {
+//            GenericEntity<ArrayList<Consultation>> consultation = new GenericEntity<ArrayList<Consultation>>(consultationDao.selectAllConsults(filter)) {};
+//            if(headers.getAcceptableMediaTypes().contains(MediaType.valueOf(MediaType.APPLICATION_XML))) {
+//                return Response
+//                        .ok(consultation)
+//                        .type(MediaType.APPLICATION_XML)
+//                        .build();
+////
+//            }else if(headers.getAcceptableMediaTypes().contains(MediaType.valueOf("text/csv"))) {
+//                return Response
+//                        .ok(consultation)
+//                        .type("text/csv")
+//                        .build();
+//            }
+//
+//            return Response
+//                    .ok(consultation, MediaType.APPLICATION_JSON)
+//                    .build();
+//        } catch (SQLException | ClassNotFoundException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
 
     //GET ALL Consultation
 
@@ -72,6 +72,37 @@ public class ConsultationController {
 //            throw new RuntimeException(e);
 //        }
 //    }
+@GET
+@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON,"text/csv"})
+public Response getAllConsults(
+        //BeanParam hss object that contains more than on parameter
+        //نجمع كل البراميترز داخل الكلاس ConsultFilterDto ونبعث الاوبجت filter
+        @BeanParam ConsultationFilterDto filter ) throws SQLException, ClassNotFoundException {
+
+    try {
+        GenericEntity<ArrayList<ConsultationDto>> consultationDto = new GenericEntity<ArrayList<ConsultationDto>>(consultationDao.selectAllConsults(filter)) {
+        };
+        if (headers.getAcceptableMediaTypes().contains(MediaType.valueOf(MediaType.APPLICATION_XML))) {
+            return Response
+                    .ok(consultationDto)
+                    .type(MediaType.APPLICATION_XML)
+                    .build();
+//
+        } else if (headers.getAcceptableMediaTypes().contains(MediaType.valueOf("text/csv"))) {
+            return Response
+                    .ok(consultationDto)
+                    .type("text/csv")
+                    .build();
+        }
+
+        return Response
+                .ok(consultationDto, MediaType.APPLICATION_JSON)
+                .build();
+    } catch (SQLException | ClassNotFoundException e) {
+        throw new RuntimeException(e);
+    }
+}
+
 
  // GET Consultation BY ID
     @GET
@@ -84,7 +115,7 @@ public class ConsultationController {
                 throw new DataNotFoundException("Consultation with ID " + consultation_id + " not found");
             }
 
-          ConsultationDto consultationDto = ConsultationMapper.INSTANCE.toConsultationDto(consultation);
+           consultationDto = ConsultationMapper.INSTANCE.toConsultationDto(consultation);
 
             return Response.ok(consultationDto).build();
         } catch (SQLException | ClassNotFoundException e) {
@@ -92,15 +123,16 @@ public class ConsultationController {
         }
     }
 
-    //Insert Schedule
+    //Insert Consultation
     @POST
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, "text/csv"})
     public Response InsertConsultation(ConsultationDto consultationDto) throws SQLException, ClassNotFoundException {
         try {
-            Consultation consultation = ConsultationMapper.INSTANCE.toConsultationModel(consultationDto);
+//            Consultation consultation = ConsultationMapper.INSTANCE.toConsultationModel(consultationDto);
 
-            consultationDao.InsertConsultation(consultation);
-            URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(consultation.getConsultation_id())).build();
+            consultationDao.InsertConsultation(consultationDto);
+
+            URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(consultationDto.getConsultation_id())).build();
             return Response.created(uri).build();
 
         } catch (ClassNotFoundException | SQLException e) {
@@ -108,15 +140,16 @@ public class ConsultationController {
         }
     }
 
-    // UPDATE schedule
+    // UPDATE Consultation
     @PUT
     @Path("{consultation_id}")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, "text/csv"})
-    public void updateConsultation(@PathParam("consultation_id") int consultation_id, Consultation consultation) throws SQLException, ClassNotFoundException {
+    public void updateConsultation(@PathParam("consultation_id") int consultation_id, ConsultationDto consultationDto) throws SQLException, ClassNotFoundException {
 
         try {
-            consultation.setConsultation_id(consultation_id);
-            consultationDao.updateConsultation(consultation);
+            consultationDto.setConsultation_id(consultation_id);
+            consultationDao.updateConsultation(consultationDto);
+
         } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }

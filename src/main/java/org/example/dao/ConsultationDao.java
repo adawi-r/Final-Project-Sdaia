@@ -20,6 +20,9 @@ public class ConsultationDao {
     //• Patient can check a consultation result
     private static final String SELECT_ONE_CONSULTATION = "select * from CONSULTATIONS where consultation_id = ?";
 
+    private static final String SELECT_CONSULTATION_PATIENT = "select * from CONSULTATIONS where patient_id = ?";
+
+
     private static final String SELECT_CONSULT_WITH_DIAGNOSE = "select * from CONSULTATIONS where consultation_diagnosis = ?";
 
     //• Doctor check all pending consultation requests
@@ -75,7 +78,45 @@ public class ConsultationDao {
 
     // select by many things
 
-    public ArrayList<Consultation> selectAllConsults(ConsultationFilterDto filter) throws SQLException, ClassNotFoundException {
+//    public ArrayList<Consultation> selectAllConsults(ConsultationFilterDto filter) throws SQLException, ClassNotFoundException {
+////        Class.forName("org.sqlite.JDBC");
+//        Connection conn = MCPConnection.getConn();
+//        PreparedStatement st;
+//        if(filter.getConsultation_diagnosis() != null) {
+//            st = conn.prepareStatement(SELECT_CONSULT_WITH_DIAGNOSE);
+//            st.setString(1, filter.getConsultation_diagnosis());
+//        }
+//        else if(filter.getDoctor_id() != null && filter.getConsultation_status() != null) {
+//            st = conn.prepareStatement(SELECT_CONSULT_DOCTOR_ID_PENDING_REQ);
+//            st.setInt(1, filter.getDoctor_id());
+//            st.setString(2, filter.getConsultation_status());
+//        }
+//        else if(filter.getPendingRequest() != null) {
+//            st = conn.prepareStatement(SELECT_CONSULT_WITH_PENDING_REQ);
+//            st.setString(1, filter.getPendingRequest().toString());
+//        }
+//        else if(filter.getConsultation_rating() != null) {
+//            st = conn.prepareStatement(SELECT_CONSULT_WITH_RATE);
+//            st.setInt(1, filter.getConsultation_rating());
+//        }
+//        else if(filter.getConsultation_status() != null) {
+//            st = conn.prepareStatement(SELECT_CONSULT_WITH_STAT);
+//            st.setString(1, filter.getConsultation_status());
+//        }
+//        else {
+//            st = conn.prepareStatement(SELECT_ALL_CONSULTATION);
+//        }
+//        ResultSet rs = st.executeQuery();
+//        ArrayList<Consultation> consultations = new ArrayList<>();
+//        while (rs.next()) {
+//            consultations.add(new Consultation(rs));
+//        }
+//
+//        return consultations;
+//    }
+
+
+    public ArrayList<ConsultationDto> selectAllConsults(ConsultationFilterDto filter) throws SQLException, ClassNotFoundException {
 //        Class.forName("org.sqlite.JDBC");
         Connection conn = MCPConnection.getConn();
         PreparedStatement st;
@@ -92,9 +133,9 @@ public class ConsultationDao {
             st = conn.prepareStatement(SELECT_CONSULT_WITH_PENDING_REQ);
             st.setString(1, filter.getPendingRequest().toString());
         }
-        else if(filter.getConsultation_rating() != null) {
-            st = conn.prepareStatement(SELECT_CONSULT_WITH_RATE);
-            st.setInt(1, filter.getConsultation_rating());
+        else if(filter.getPatient_id() != null) {
+            st = conn.prepareStatement(SELECT_CONSULTATION_PATIENT);
+            st.setInt(1, filter.getPatient_id());
         }
         else if(filter.getConsultation_status() != null) {
             st = conn.prepareStatement(SELECT_CONSULT_WITH_STAT);
@@ -104,69 +145,60 @@ public class ConsultationDao {
             st = conn.prepareStatement(SELECT_ALL_CONSULTATION);
         }
         ResultSet rs = st.executeQuery();
-        ArrayList<Consultation> consultations = new ArrayList<>();
+        ArrayList<ConsultationDto> consultations = new ArrayList<>();
         while (rs.next()) {
-            consultations.add(new Consultation(rs));
+            consultations.add(new ConsultationDto(rs));
         }
 
         return consultations;
     }
 
     //Insert Consultation
-    public void InsertConsultation(Consultation consultation) throws SQLException, ClassNotFoundException {
+    public void InsertConsultation(ConsultationDto consultationDto) throws SQLException, ClassNotFoundException {
         Class.forName("org.sqlite.JDBC");
         Connection conn = MCPConnection.getConn();
         PreparedStatement st = conn.prepareStatement(INSERT_CONSULTATION);
-        st.setInt(1, consultation.getDoctor_id());
-        st.setInt(2, consultation.getPatient_id());
-        st.setString(3, consultation.getConsultation_request_time().toString());
-        st.setString(4, consultation.getConsultation_time().toString());
-        st.setString(5, consultation.getConsultation_status());
-        st.setString(6, consultation.getConsultation_diagnosis());
-        st.setInt(7, consultation.getConsultation_rating());
+        st.setInt(1, consultationDto.getDoctor_id());
+        st.setInt(2, consultationDto.getPatient_id());
+        st.setString(3, consultationDto.getConsultation_request_time().toString());
+        st.setString(4, consultationDto.getConsultation_time().toString());
+        st.setString(5, consultationDto.getConsultation_status());
+        st.setString(6, consultationDto.getConsultation_diagnosis());
+        st.setInt(7, consultationDto.getConsultation_rating());
 
         st.executeUpdate();
     }
 
     //    update Consultation
-    public void updateConsultation(Consultation consultation) throws SQLException, ClassNotFoundException {
+    public void updateConsultation(ConsultationDto consultationDto) throws SQLException, ClassNotFoundException {
         Class.forName("org.sqlite.JDBC");
         Connection conn = MCPConnection.getConn();
         PreparedStatement st = conn.prepareStatement(UPDATE_CONSULTATION);
-        st.setInt(1, consultation.getDoctor_id());
-        st.setInt(2, consultation.getPatient_id());
-        st.setString(3, consultation.getConsultation_request_time().toString());
-        st.setString(4, consultation.getConsultation_time().toString());
-        st.setString(5, consultation.getConsultation_status());
-        st.setString(6, consultation.getConsultation_diagnosis());
-        st.setInt(7, consultation.getConsultation_rating());
-        st.setInt(8, consultation.getConsultation_id());
+        st.setInt(1, consultationDto.getDoctor_id());
+        st.setInt(2, consultationDto.getPatient_id());
+        st.setString(3, consultationDto.getConsultation_request_time().toString());
+        st.setString(4, consultationDto.getConsultation_time().toString());
+        st.setString(5, consultationDto.getConsultation_status());
+        st.setString(6, consultationDto.getConsultation_diagnosis());
+        st.setInt(7, consultationDto.getConsultation_rating());
+        st.setInt(8, consultationDto.getConsultation_id());
         st.executeUpdate();
     }
 
-    public ArrayList<RateDto> searchByRate(int rate) throws SQLException, ClassNotFoundException {
-        Class.forName("org.sqlite.JDBC");
-        try (Connection conn = MCPConnection.getConn();
-             PreparedStatement st = conn.prepareStatement(SELECT_RATE)) {
-            st.setInt(1, rate);
-            ResultSet rs = st.executeQuery();
-            ArrayList<RateDto> cons = new ArrayList<>();
-            while (rs.next()) {
-                cons.add(new RateDto(rs));
-            }
-            return cons;
-        }
-    }
-
-
-//    //    delete Consultation
-//    public void deleteConsultation(int consultation_id) throws SQLException, ClassNotFoundException {
+//    public ArrayList<RateDto> searchByRate(int rate) throws SQLException, ClassNotFoundException {
 //        Class.forName("org.sqlite.JDBC");
-//        Connection conn = DriverManager.getConnection(URL);
-//        PreparedStatement st = conn.prepareStatement(DELETE_CONSULTATION);
-//        st.setInt(1, consultation_id);
-//        st.executeUpdate();
+//        try (Connection conn = MCPConnection.getConn();
+//             PreparedStatement st = conn.prepareStatement(SELECT_RATE)) {
+//            st.setInt(1, rate);
+//            ResultSet rs = st.executeQuery();
+//            ArrayList<RateDto> cons = new ArrayList<>();
+//            while (rs.next()) {
+//                cons.add(new RateDto(rs));
+//            }
+//            return cons;
+//        }
 //    }
+
 
 
 //    public void requestConsultation(int patient_id, int doctor_id) throws SQLException, ClassNotFoundException {
