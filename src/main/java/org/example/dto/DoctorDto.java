@@ -31,6 +31,12 @@ public class DoctorDto {
         this.doctor_phone = doctor_phone;
     }
 
+    public DoctorDto(int doctor_id, String doctor_name, String doctor_specialty) {
+        this.doctor_id = doctor_id;
+        this.doctor_name = doctor_name;
+        this.doctor_specialty = doctor_specialty;
+    }
+
     public int getDoctor_id() {
         return doctor_id;
     }

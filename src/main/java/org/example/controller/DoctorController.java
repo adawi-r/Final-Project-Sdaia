@@ -21,7 +21,6 @@ public class DoctorController {
 
     DoctorDao doctorDao = new DoctorDao();
     DoctorDto doctorDto = new DoctorDto();
-    ConsultationDao consultationDao = new ConsultationDao();
 
     @Context UriInfo uriInfo;
     @Context HttpHeaders headers;
@@ -34,9 +33,9 @@ public class DoctorController {
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, "text/csv"})
     public Response registerDoctor(DoctorDto doctorDto) throws SQLException,ClassNotFoundException {
         try {
-            Doctor doctor = DoctorMapper.INSTANCE.toDoctorModel(doctorDto);
-            doctorDao.registerDoctor(doctor);
-            URI uri = uriInfo.getAbsolutePathBuilder().path(doctor.getDoctor_id() + "").build();
+//            Doctor doctor = DoctorMapper.INSTANCE.toDoctorModel(doctorDto);
+            doctorDao.registerDoctor(doctorDto);
+            URI uri = uriInfo.getAbsolutePathBuilder().path(doctorDto.getDoctor_id() + "").build();
             return Response.created(uri).build();
 
         } catch (SQLException | ClassNotFoundException e) {
@@ -54,7 +53,7 @@ public class DoctorController {
             if (doctor == null) {
                 throw new DataNotFoundException("Invalid email or password");
             }
-            DoctorDto doctorDto = DoctorMapper.INSTANCE.toDoctorDto(doctor);
+            doctorDto = DoctorMapper.INSTANCE.toDoctorDto(doctor);
             return Response.ok(doctorDto).build();
         } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
@@ -63,28 +62,28 @@ public class DoctorController {
 
 
     @GET
-    @Path ("/search")
+//    @Path ("/search")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON,"text/csv"})
     public Response getAllDoctors (
             @BeanParam DoctorFilterDto filter ) {
 
         try {
-            GenericEntity<ArrayList<Doctor>> docs = new GenericEntity<ArrayList<Doctor>>(doctorDao.selectAllDocs(filter)) {};
+            GenericEntity<ArrayList<DoctorDto>> doctorDtos = new GenericEntity<ArrayList<DoctorDto>>(doctorDao.selectAllDocs(filter)) {};
             if(headers.getAcceptableMediaTypes().contains(MediaType.valueOf(MediaType.APPLICATION_XML))) {
                 return Response
-                        .ok(docs)
+                        .ok(doctorDtos)
                         .type(MediaType.APPLICATION_XML)
                         .build();
 
             }else if(headers.getAcceptableMediaTypes().contains(MediaType.valueOf("text/csv"))) {
                 return Response
-                        .ok(docs)
+                        .ok(doctorDtos)
                         .type("text/csv")
                         .build();
             }
 
             return Response
-                    .ok(docs, MediaType.APPLICATION_JSON)
+                    .ok(doctorDtos, MediaType.APPLICATION_JSON)
                     .build();
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -129,11 +128,11 @@ public class DoctorController {
     @PUT
     @Path("{doctor_id}")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, "text/csv"})
-    public void updateDoctor(@PathParam("doctor_id") int doctor_id, Doctor doctor) throws SQLException, ClassNotFoundException {
+    public void updateDoctor(@PathParam("doctor_id") int doctor_id, DoctorDto doctorDto) throws SQLException, ClassNotFoundException {
 
         try {
-            doctor.setDoctor_id(doctor_id);
-            doctorDao.updateDoctor(doctor);
+            doctorDto.setDoctor_id(doctor_id);
+            doctorDao.updateDoctor(doctorDto);
         } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
@@ -185,16 +184,16 @@ public class DoctorController {
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, "text/csv"})
     public Response getAvailableDoctors(@QueryParam("schedule_is_available") boolean schedule_is_available) {
         try {
-            ArrayList<Doctor> doctors = doctorDao.getAvailableDoctors(schedule_is_available);
+            ArrayList<DoctorDto> doctorDtos = doctorDao.getAvailableDoctors(schedule_is_available);
 
-            GenericEntity<ArrayList<Doctor>> doctor = new GenericEntity<ArrayList<Doctor>>(doctors) {
+            GenericEntity<ArrayList<DoctorDto>> doctorDto = new GenericEntity<ArrayList<DoctorDto>>(doctorDtos) {
             };
             if (headers.getAcceptableMediaTypes().contains(MediaType.valueOf(MediaType.APPLICATION_XML))) {
-                return Response.ok(doctor).type(MediaType.APPLICATION_XML).build();
+                return Response.ok(doctorDto).type(MediaType.APPLICATION_XML).build();
             } else if (headers.getAcceptableMediaTypes().contains(MediaType.valueOf("text/csv"))) {
-                return Response.ok(doctor).type("text/csv").build();
+                return Response.ok(doctorDto).type("text/csv").build();
             } else {
-                return Response.ok(doctor, MediaType.APPLICATION_JSON).build();
+                return Response.ok(doctorDto, MediaType.APPLICATION_JSON).build();
             }
         } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
@@ -207,16 +206,16 @@ public class DoctorController {
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, "text/csv"})
     public Response getRateDoctors(@QueryParam("consultation_rating") int consultation_rating) {
         try {
-            ArrayList<Doctor> doctors = doctorDao.getRateDoctors(consultation_rating);
+            ArrayList<DoctorDto> doctorDtos = doctorDao.getRateDoctors(consultation_rating);
 
-            GenericEntity<ArrayList<Doctor>> doctor = new GenericEntity<ArrayList<Doctor>>(doctors) {
+            GenericEntity<ArrayList<DoctorDto>> doctorDto = new GenericEntity<ArrayList<DoctorDto>>(doctorDtos) {
             };
             if (headers.getAcceptableMediaTypes().contains(MediaType.valueOf(MediaType.APPLICATION_XML))) {
-                return Response.ok(doctor).type(MediaType.APPLICATION_XML).build();
+                return Response.ok(doctorDto).type(MediaType.APPLICATION_XML).build();
             } else if (headers.getAcceptableMediaTypes().contains(MediaType.valueOf("text/csv"))) {
-                return Response.ok(doctor).type("text/csv").build();
+                return Response.ok(doctorDto).type("text/csv").build();
             } else {
-                return Response.ok(doctor, MediaType.APPLICATION_JSON).build();
+                return Response.ok(doctorDto, MediaType.APPLICATION_JSON).build();
             }
         } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);

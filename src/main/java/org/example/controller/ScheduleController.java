@@ -57,7 +57,7 @@ public class ScheduleController {
                 throw new DataNotFoundException("Schedule with ID " + schedule_id + " not found");
             }
 
-            ScheduleDto scheduleDto = ScheduleMapper.INSTANCE.toScheduleDto(schedule);
+            scheduleDto = ScheduleMapper.INSTANCE.toScheduleDto(schedule);
 
             return Response.ok(scheduleDto).build();
         } catch (SQLException | ClassNotFoundException e) {
@@ -74,23 +74,23 @@ public class ScheduleController {
             @BeanParam ScheduleFilterDto filter) throws SQLException, ClassNotFoundException {
 
         try {
-            GenericEntity<ArrayList<Schedule>> schedules = new GenericEntity<ArrayList<Schedule>>(scheduleDao.selectAllSchedules(filter)) {};
+            GenericEntity<ArrayList<ScheduleDto>> scheduleDtos = new GenericEntity<ArrayList<ScheduleDto>>(scheduleDao.selectAllSchedules(filter)) {};
             if(headers.getAcceptableMediaTypes().contains(MediaType.valueOf(MediaType.APPLICATION_XML))) {
                 return Response
-                        .ok(schedules)
+                        .ok(scheduleDtos)
                         .type(MediaType.APPLICATION_XML)
                         .build();
 
             }
             else if(headers.getAcceptableMediaTypes().contains(MediaType.valueOf("text/csv"))) {
                 return Response
-                        .ok(schedules)
+                        .ok(scheduleDtos)
                         .type("text/csv")
                         .build();
             }
 
             return Response
-                    .ok(schedules, MediaType.APPLICATION_JSON)
+                    .ok(scheduleDtos, MediaType.APPLICATION_JSON)
                     .build();
         } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
@@ -103,10 +103,10 @@ public class ScheduleController {
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, "text/csv"})
     public Response InsertSchedule(ScheduleDto scheduleDto) throws SQLException, ClassNotFoundException {
         try {
-            Schedule schedule = ScheduleMapper.INSTANCE.toScheduleModel(scheduleDto);
+//            Schedule schedule = ScheduleMapper.INSTANCE.toScheduleModel(scheduleDto);
 
-            scheduleDao.InsertSchedule(schedule);
-            URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(schedule.getSchedule_id())).build();
+            scheduleDao.InsertSchedule(scheduleDto);
+            URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(scheduleDto.getSchedule_id())).build();
             return Response.created(uri).build();
 
         } catch (ClassNotFoundException | SQLException e) {
@@ -116,13 +116,13 @@ public class ScheduleController {
 
     // UPDATE schedule
     @PUT
-    @Path("{schedule_id}")
+    @Path("/{schedule_id}")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, "text/csv"})
-    public void updateSchedule(@PathParam("schedule_id") int schedule_id, Schedule schedule) throws SQLException, ClassNotFoundException {
+    public void updateSchedule(@PathParam("schedule_id") int schedule_id, ScheduleDto scheduleDto) throws SQLException, ClassNotFoundException {
 
         try {
-            schedule.setSchedule_id(schedule_id);
-            scheduleDao.updateSchedule(schedule);
+            scheduleDto.setSchedule_id(schedule_id);
+            scheduleDao.updateSchedule(scheduleDto);
         } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
@@ -131,16 +131,15 @@ public class ScheduleController {
 
 //    select by doctor id
 //@GET
-//@Path("/{doctor_id}")
+//@Path("/schedule/{doctor_id}")
 //@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, "text/csv"})
 //public Response selectSchedulesByDoctorId(@PathParam("doctor_id") int doctor_id) throws SQLException, ClassNotFoundException {
 //    try {
-//        Schedule schedule = scheduleDao.selectSchedulesByDoctor(doctor_id);
-//        if (schedule == null) {
+//        ArrayList<ScheduleDto> scheduleDto = scheduleDao.selectSchedulesByDoctor(doctor_id);
+//        if (scheduleDto == null) {
 //            throw new DataNotFoundException("Schedule with ID " + doctor_id + " not found");
 //        }
 //
-//        ScheduleDto scheduleDto = ScheduleMapper.INSTANCE.toScheduleDto(schedule);
 //
 //        return Response.ok(scheduleDto).build();
 //    } catch (SQLException | ClassNotFoundException e) {

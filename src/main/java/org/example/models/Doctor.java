@@ -37,12 +37,12 @@ public class Doctor {
         this.doctor_password = doctor_password;
         this.doctor_phone = doctor_phone;
     }
-
-    public Doctor(int doctor_id, String doctor_name, String doctor_specialty) {
-        this.doctor_id = doctor_id;
-        this.doctor_name = doctor_name;
-        this.doctor_specialty = doctor_specialty;
-    }
+//
+//    public Doctor(int doctor_id, String doctor_name, String doctor_specialty) {
+//        this.doctor_id = doctor_id;
+//        this.doctor_name = doctor_name;
+//        this.doctor_specialty = doctor_specialty;
+//    }
 
     public Doctor(ResultSet rs) throws SQLException {
 

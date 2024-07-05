@@ -1,6 +1,7 @@
 package org.example.dao;
 
 import org.example.dto.MedicalReporFilterDto;
+import org.example.dto.MedicalReportDto;
 import org.example.models.MedicalReport;
 import org.example.db.MCPConnection;
 
@@ -59,7 +60,7 @@ public class MedicalReportDao {
     }
 
     // select many things
-    public ArrayList<MedicalReport> selectAllMeds(MedicalReporFilterDto filter) throws SQLException, ClassNotFoundException {
+    public ArrayList<MedicalReportDto> selectAllMeds(MedicalReporFilterDto filter) throws SQLException, ClassNotFoundException {
 //        Class.forName("org.sqlite.JDBC");
         Connection conn = MCPConnection.getConn();
         PreparedStatement st;
@@ -74,36 +75,36 @@ public class MedicalReportDao {
             st = conn.prepareStatement(SELECT_ALL_MEDICAL_REPORT);
         }
         ResultSet rs = st.executeQuery();
-        ArrayList<MedicalReport> medicalReports = new ArrayList<>();
+        ArrayList<MedicalReportDto> medicalReportDtos = new ArrayList<>();
         while (rs.next()) {
-            medicalReports.add(new MedicalReport(rs));
+            medicalReportDtos.add(new MedicalReportDto(rs));
         }
-        return medicalReports;
+        return medicalReportDtos;
     }
 
 
 //• Doctor search patients’ medical records
 //INSERT_MEDICAL_REPORT
-    public void InsertMedicalReport(MedicalReport medicalReport) throws SQLException, ClassNotFoundException {
+    public void InsertMedicalReport(MedicalReportDto medicalReportDto) throws SQLException, ClassNotFoundException {
 //        Class.forName("org.sqlite.JDBC");
         Connection conn = MCPConnection.getConn();
         PreparedStatement st = conn.prepareStatement(INSERT_MEDICAL_REPORT);
 
-        st.setInt(1, medicalReport.getPatient_id());
-        st.setString(2, medicalReport.getMedical_report_details());
-        st.setString(3, medicalReport.getMedical_report_report_date().toString());
+        st.setInt(1, medicalReportDto.getPatient_id());
+        st.setString(2, medicalReportDto.getMedical_report_details());
+        st.setString(3, medicalReportDto.getMedical_report_report_date().toString());
         st.executeUpdate();
     }
 
     //    update MedicalReport
-    public void updateMedicalReport(MedicalReport medicalReport) throws SQLException, ClassNotFoundException {
+    public void updateMedicalReport(MedicalReportDto medicalReportDto) throws SQLException, ClassNotFoundException {
 //        Class.forName("org.sqlite.JDBC");
         Connection conn = MCPConnection.getConn();
         PreparedStatement st = conn.prepareStatement(UPDATE_MEDICAL_REPORT);
-        st.setInt(1, medicalReport.getPatient_id());
-        st.setString(2, medicalReport.getMedical_report_details());
-        st.setString(3, medicalReport.getMedical_report_report_date().toString());
-        st.setInt(4, medicalReport.getMedical_report_id());
+        st.setInt(1, medicalReportDto.getPatient_id());
+        st.setString(2, medicalReportDto.getMedical_report_details());
+        st.setString(3, medicalReportDto.getMedical_report_report_date().toString());
+        st.setInt(4, medicalReportDto.getMedical_report_id());
 
         st.executeUpdate();
     }

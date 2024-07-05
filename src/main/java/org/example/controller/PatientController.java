@@ -69,8 +69,8 @@ public class PatientController {
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, "text/csv"})
     public Response selectAllPatient() throws SQLException, ClassNotFoundException{
         try {
-            GenericEntity<ArrayList<Patient>> patient = new GenericEntity<ArrayList<Patient>>(patientDao.selectAllPatients(patientDto)) {};
-            return Response.ok(patient, MediaType.APPLICATION_JSON).build();
+            GenericEntity<ArrayList<PatientDto>> patientDtos = new GenericEntity<ArrayList<PatientDto>>(patientDao.selectAllPatients(patientDto)) {};
+            return Response.ok(patientDtos, MediaType.APPLICATION_JSON).build();
         } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
@@ -99,11 +99,11 @@ public class PatientController {
     @PUT
     @Path("{patient_id}")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, "text/csv"})
-    public void updatePatient(@PathParam("patient_id") int patient_id, Patient patient) throws SQLException, ClassNotFoundException {
+    public void updatePatient(@PathParam("patient_id") int patient_id, PatientDto patientDto) throws SQLException, ClassNotFoundException {
 
         try {
-            patient.setPatient_id(patient_id);
-            patientDao.updatePatient(patient);
+            patientDto.setPatient_id(patient_id);
+            patientDao.updatePatient(patientDto);
         } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }

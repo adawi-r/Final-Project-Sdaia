@@ -34,16 +34,16 @@ public class PatientDao {
 //    private static final String JOIN_DOCTOR_SELECT_PATIENT_BY_ID = "select * from PATIENTS join PATIENTS on DOCTORS.";
 
     //SELECT_ALL_PATIENT
-    public ArrayList<Patient> selectAllPatients(PatientDto patientDto) throws SQLException, ClassNotFoundException {
+    public ArrayList<PatientDto> selectAllPatients(PatientDto patientDto) throws SQLException, ClassNotFoundException {
 //        Class.forName("org.sqlite.JDBC");
         Connection conn = MCPConnection.getConn();
         PreparedStatement st = conn.prepareStatement(SELECT_ALL_PATIEN);
         ResultSet rs = st.executeQuery();
-        ArrayList<Patient> patients = new ArrayList<>();
+        ArrayList<PatientDto> patientDtos = new ArrayList<>();
         while (rs.next()) {
-            patients.add(new Patient(rs));
+            patientDtos.add(new PatientDto(rs));
         }
-        return patients;
+        return patientDtos;
     }
 
 //    select one patient
@@ -91,16 +91,16 @@ public class PatientDao {
     }
 
 //    update Patient
-    public void updatePatient(Patient p) throws SQLException, ClassNotFoundException {
+    public void updatePatient(PatientDto patientDto) throws SQLException, ClassNotFoundException {
 //        Class.forName("org.sqlite.JDBC");
         Connection conn = MCPConnection.getConn();
         PreparedStatement st = conn.prepareStatement(UPDATE_PATIEN);
-        st.setString(1, p.getPatient_name());
-        st.setString(2, p.getPatient_email());
-        st.setString(3, p.getPatient_password());
-        st.setString(4, p.getPatient_phone());
-        st.setString(5, p.getPatient_birth_date().toString());
-        st.setInt(6, p.getPatient_id());
+        st.setString(1, patientDto.getPatient_name());
+        st.setString(2, patientDto.getPatient_email());
+        st.setString(3, patientDto.getPatient_password());
+        st.setString(4, patientDto.getPatient_phone());
+        st.setString(5, patientDto.getPatient_birth_date().toString());
+        st.setInt(6, patientDto.getPatient_id());
         st.executeUpdate();
     }
 

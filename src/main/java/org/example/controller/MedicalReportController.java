@@ -52,7 +52,7 @@ public class MedicalReportController {
                 throw new DataNotFoundException("medical_report with ID " + medical_report_id + " not found");
             }
 
-            MedicalReportDto medicalReportDto = MedicalReportMapper.INSTANCE.toMedicalReportDto(medicalReport);
+            medicalReportDto = MedicalReportMapper.INSTANCE.toMedicalReportDto(medicalReport);
 
             return Response.ok(medicalReportDto).build();
         } catch (SQLException | ClassNotFoundException e) {
@@ -67,24 +67,24 @@ public class MedicalReportController {
             @BeanParam MedicalReporFilterDto filter) throws SQLException, ClassNotFoundException {
 
         try {
-            GenericEntity<ArrayList<MedicalReport>> meds = new GenericEntity<ArrayList<MedicalReport>>(medicalReportDao.selectAllMeds(filter)) {};
+//            GenericEntity<ArrayList<MedicalReport>> meds = new GenericEntity<ArrayList<MedicalReport>>(medicalReportDao.selectAllMeds(filter)) {};
 
-//            GenericEntity<ArrayList<MedicalReportDto>> meds = new GenericEntity<ArrayList<MedicalReportDto>>(medicalReport.selectAllMeds(filter)) {};
+            GenericEntity<ArrayList<MedicalReportDto>> medicalReportDtos = new GenericEntity<ArrayList<MedicalReportDto>>(medicalReportDao.selectAllMeds(filter)) {};
 
             if(headers.getAcceptableMediaTypes().contains(MediaType.valueOf(MediaType.APPLICATION_XML))) {
                 return Response
-                        .ok(meds)
+                        .ok(medicalReportDtos)
                         .type(MediaType.APPLICATION_XML)
                         .build();
             }
             else if(headers.getAcceptableMediaTypes().contains(MediaType.valueOf("text/csv"))) {
                 return Response
-                        .ok(meds)
+                        .ok(medicalReportDtos)
                         .type("text/csv")
                         .build();
             }
             return Response
-                    .ok(meds, MediaType.APPLICATION_JSON)
+                    .ok(medicalReportDtos, MediaType.APPLICATION_JSON)
                     .build();
         } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
@@ -97,10 +97,10 @@ public class MedicalReportController {
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, "text/csv"})
     public Response InsertMedicalReport(MedicalReportDto medicalReportDto) throws SQLException, ClassNotFoundException {
         try {
-            MedicalReport medicalReport = MedicalReportMapper.INSTANCE.toMedicalReportModel(medicalReportDto);
+//            MedicalReport medicalReport = MedicalReportMapper.INSTANCE.toMedicalReportModel(medicalReportDto);
 
-            medicalReportDao.InsertMedicalReport(medicalReport);
-            URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(medicalReport.getMedical_report_id())).build();
+            medicalReportDao.InsertMedicalReport(medicalReportDto);
+            URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(medicalReportDto.getMedical_report_id())).build();
             return Response.created(uri).build();
 
         } catch (ClassNotFoundException | SQLException e) {
@@ -112,11 +112,11 @@ public class MedicalReportController {
     @PUT
     @Path("{medical_report_id}")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, "text/csv"})
-    public void updateMedicalReport(@PathParam("medical_report_id") int medical_report_id, MedicalReport medicalReport) throws SQLException, ClassNotFoundException {
+    public void updateMedicalReport(@PathParam("medical_report_id") int medical_report_id, MedicalReportDto medicalReportDto) throws SQLException, ClassNotFoundException {
 
         try {
-            medicalReport.setMedical_report_id(medical_report_id);
-            medicalReportDao.updateMedicalReport(medicalReport);
+            medicalReportDto.setMedical_report_id(medical_report_id);
+            medicalReportDao.updateMedicalReport(medicalReportDto);
         } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
