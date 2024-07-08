@@ -79,7 +79,8 @@ public class PatientController {
     // GET PATIENT BY ID
     @GET
     @Path("/{patient_id}")
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, "text/csv"})
+    @Produces({//MediaType.APPLICATION_XML,
+            MediaType.APPLICATION_JSON, "text/csv"})
     public Response selectPatient(@PathParam("patient_id") int patient_id) throws SQLException, ClassNotFoundException {
         try {
             Patient patient = patientDao.selectPatient(patient_id);

@@ -2,8 +2,8 @@ package org.example.dao;
 
 import org.example.db.MCPConnection;
 import org.example.dto.ConsultationDto;
+import org.example.dto.ConsultationDtoAll;
 import org.example.dto.ConsultationFilterDto;
-import org.example.dto.RateDto;
 import org.example.models.Consultation;
 
 import java.sql.*;
@@ -12,27 +12,24 @@ import java.util.ArrayList;
 
 public class ConsultationDao {
 
-    // Data URL
-//    private static final String URL = "jdbc:sqlite:C:\\Users\\dev\\Desktop\\Final_ProjectV1\\FinalDataV4.db";
 
     private static final String SELECT_ALL_CONSULTATION = "select * from CONSULTATIONS";
 
     //• Patient can check a consultation result
     private static final String SELECT_ONE_CONSULTATION = "select * from CONSULTATIONS where consultation_id = ?";
 
+    //• Patient can request a medical history report for all previously recorded diagnosis
     private static final String SELECT_CONSULTATION_PATIENT = "select * from CONSULTATIONS where patient_id = ?";
-
 
     private static final String SELECT_CONSULT_WITH_DIAGNOSE = "select * from CONSULTATIONS where consultation_diagnosis = ?";
 
     //• Doctor check all pending consultation requests
     private static final String SELECT_CONSULT_DOCTOR_ID_PENDING_REQ = "select * from CONSULTATIONS where doctor_id = ? AND consultation_status = ?";
     private static final String SELECT_CONSULT_WITH_PENDING_REQ = "select * from CONSULTATIONS where consultation_status = ?";
-
     //Patient search for doctor by dynamic criteria [ratings]
 //    private static final String SELECT_CONSULT_WITH_RATE = "select doctor_id, count(*) from CONSULTATIONS where consultation_rating = ?";
-    private static final String SELECT_CONSULT_WITH_RATE = "select * from CONSULTATIONS where consultation_rating = ?";
-    private static final String SELECT_RATE = "select DISTINCT doctor_id from CONSULTATIONS where consultation_rating = ?";
+//    private static final String SELECT_CONSULT_WITH_RATE = "select * from CONSULTATIONS where consultation_rating = ?";
+//    private static final String SELECT_RATE = "select DISTINCT doctor_id from CONSULTATIONS where consultation_rating = ?";
 
     //• Doctor give consultation to a pending request
     private static final String SELECT_CONSULT_WITH_STAT = "select * from CONSULTATIONS where consultation_status = ?";
@@ -41,7 +38,7 @@ public class ConsultationDao {
     //1- Patient request consultation from a selected doctor - 2- rate a doctor
     private static final String INSERT_CONSULTATION = "INSERT INTO CONSULTATIONS (doctor_id, patient_id, consultation_request_time, consultation_time, consultation_status, consultation_diagnosis, consultation_rating) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-    //1- Patient request consultation from a selected doctor - 2- rate a doctor
+    //1- Patient request consultation from a selected doctor - 2- record a patient’s diagnosis
     private static final String UPDATE_CONSULTATION = "update CONSULTATIONS set doctor_id = ?, patient_id = ?, consultation_request_time = ?, consultation_time = ?, consultation_status = ?, consultation_diagnosis = ?, consultation_rating = ? where consultation_id = ?";
 //    private static final String DELETE_CONSULTATION = "delete from CONSULTATIONS where consultation_id = ?";
 
@@ -62,14 +59,16 @@ public class ConsultationDao {
 
 
     //SELECT_ONE_Consultation
-    public Consultation selectConsultationById(int consultation_id) throws SQLException, ClassNotFoundException {
+    public ConsultationDto selectConsultationById(int consultation_id) throws SQLException, ClassNotFoundException {
 //        Class.forName("org.sqlite.JDBC");
         Connection conn = MCPConnection.getConn();
         PreparedStatement st = conn.prepareStatement(SELECT_ONE_CONSULTATION);
+
         st.setInt(1, consultation_id);
+
         ResultSet rs = st.executeQuery();
         if(rs.next()) {
-            return new Consultation(rs);
+            return new ConsultationDto(rs);
         }
         else {
             return null;
@@ -145,43 +144,43 @@ public class ConsultationDao {
             st = conn.prepareStatement(SELECT_ALL_CONSULTATION);
         }
         ResultSet rs = st.executeQuery();
-        ArrayList<ConsultationDto> consultations = new ArrayList<>();
+        ArrayList<ConsultationDto> consultationDtos = new ArrayList<>();
         while (rs.next()) {
-            consultations.add(new ConsultationDto(rs));
+            consultationDtos.add(new ConsultationDto(rs));
         }
 
-        return consultations;
+        return consultationDtos;
     }
 
     //Insert Consultation
-    public void InsertConsultation(ConsultationDto consultationDto) throws SQLException, ClassNotFoundException {
+    public void InsertConsultation(Consultation consultation) throws SQLException, ClassNotFoundException {
         Class.forName("org.sqlite.JDBC");
         Connection conn = MCPConnection.getConn();
         PreparedStatement st = conn.prepareStatement(INSERT_CONSULTATION);
-        st.setInt(1, consultationDto.getDoctor_id());
-        st.setInt(2, consultationDto.getPatient_id());
-        st.setString(3, consultationDto.getConsultation_request_time().toString());
-        st.setString(4, consultationDto.getConsultation_time().toString());
-        st.setString(5, consultationDto.getConsultation_status());
-        st.setString(6, consultationDto.getConsultation_diagnosis());
-        st.setInt(7, consultationDto.getConsultation_rating());
+        st.setInt(1, consultation.getDoctor_id());
+        st.setInt(2, consultation.getPatient_id());
+        st.setString(3, consultation.getConsultation_request_time().toString());
+        st.setString(4, consultation.getConsultation_time().toString());
+        st.setString(5, consultation.getConsultation_status());
+        st.setString(6, consultation.getConsultation_diagnosis());
+        st.setInt(7, consultation.getConsultation_rating());
 
         st.executeUpdate();
     }
 
     //    update Consultation
-    public void updateConsultation(ConsultationDto consultationDto) throws SQLException, ClassNotFoundException {
+    public void updateConsultation(ConsultationDtoAll consultationDtoAll) throws SQLException, ClassNotFoundException {
         Class.forName("org.sqlite.JDBC");
         Connection conn = MCPConnection.getConn();
         PreparedStatement st = conn.prepareStatement(UPDATE_CONSULTATION);
-        st.setInt(1, consultationDto.getDoctor_id());
-        st.setInt(2, consultationDto.getPatient_id());
-        st.setString(3, consultationDto.getConsultation_request_time().toString());
-        st.setString(4, consultationDto.getConsultation_time().toString());
-        st.setString(5, consultationDto.getConsultation_status());
-        st.setString(6, consultationDto.getConsultation_diagnosis());
-        st.setInt(7, consultationDto.getConsultation_rating());
-        st.setInt(8, consultationDto.getConsultation_id());
+        st.setInt(1, consultationDtoAll.getDoctor_id());
+        st.setInt(2, consultationDtoAll.getPatient_id());
+        st.setString(3, consultationDtoAll.getConsultation_request_time().toString());
+        st.setString(4, consultationDtoAll.getConsultation_time().toString());
+        st.setString(5, consultationDtoAll.getConsultation_status());
+        st.setString(6, consultationDtoAll.getConsultation_diagnosis());
+        st.setInt(7, consultationDtoAll.getConsultation_rating());
+        st.setInt(8, consultationDtoAll.getConsultation_id());
         st.executeUpdate();
     }
 

@@ -1,6 +1,6 @@
 package org.example.mappers;
 
-import org.example.dto.ConsultationDto;
+import org.example.dto.ConsultationDtoAll;
 import org.example.models.Consultation;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
@@ -13,13 +13,13 @@ public interface ConsultationMapper {
     ConsultationMapper INSTANCE = Mappers.getMapper(ConsultationMapper.class);
 
 
-    ConsultationDto toConsultationDto(Consultation consultation);
+    ConsultationDtoAll toConsultationDto(Consultation consultation);
 
-    Consultation toConsultationModel(ConsultationDto consultationDto);
+    Consultation toConsultationModel(ConsultationDtoAll consultationDtoAll);
 
 
-    List<ConsultationDto> toConsultationDto(List<Consultation> consultations);
+    List<ConsultationDtoAll> toConsultationDto(List<Consultation> consultations);
 
-    List<Consultation> toConsultationModel(List<ConsultationDto> consultationsDtos);
+    List<Consultation> toConsultationModel(List<ConsultationDtoAll> consultationsDtos);
 
 }

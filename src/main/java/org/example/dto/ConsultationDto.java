@@ -1,6 +1,5 @@
 package org.example.dto;
 
-import jakarta.ws.rs.FormParam;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlElementWrapper;
 import jakarta.xml.bind.annotation.XmlRootElement;
@@ -13,7 +12,7 @@ import java.util.ArrayList;
 @XmlRootElement
 public class ConsultationDto {
 
-    private int consultation_id;
+//    private int consultation_id;
     private int doctor_id;
     private int patient_id;
     private LocalDateTime consultation_request_time;
@@ -26,8 +25,7 @@ public class ConsultationDto {
     public ConsultationDto() {
     }
 
-    public ConsultationDto(int consultation_id, int doctor_id, int patient_id, LocalDateTime consultation_request_time, LocalDateTime consultation_time, String consultation_status, String consultation_diagnosis, int consultation_rating) {
-        this.consultation_id = consultation_id;
+    public ConsultationDto(int doctor_id, int patient_id, LocalDateTime consultation_request_time, LocalDateTime consultation_time, String consultation_status, String consultation_diagnosis, int consultation_rating) {
         this.doctor_id = doctor_id;
         this.patient_id = patient_id;
         this.consultation_request_time = consultation_request_time;
@@ -37,13 +35,12 @@ public class ConsultationDto {
         this.consultation_rating = consultation_rating;
     }
 
-    public int getConsultation_id() {
-        return consultation_id;
+    //for rating
+    public ConsultationDto(int doctor_id, int consultation_rating) {
+        this.doctor_id = doctor_id;
+        this.consultation_rating = consultation_rating;
     }
 
-    public void setConsultation_id(int consultation_id) {
-        this.consultation_id = consultation_id;
-    }
 
     public int getDoctor_id() {
         return doctor_id;
@@ -74,7 +71,7 @@ public class ConsultationDto {
     }
 
     public void setConsultation_time(LocalDateTime consultation_time) {
-        this.consultation_time = consultation_time;
+        this.consultation_time = LocalDateTime.now();
     }
 
     public String getConsultation_status() {
@@ -116,9 +113,9 @@ public class ConsultationDto {
     }
 
     public ConsultationDto(ResultSet rs) throws SQLException {
-        consultation_id = rs.getInt("consultation_id");
         doctor_id = rs.getInt("doctor_id");
         patient_id = rs.getInt("patient_id");
+
         consultation_request_time = LocalDateTime.parse(rs.getString("consultation_request_time"));
         consultation_time = LocalDateTime.parse(rs.getString("consultation_time"));
 
@@ -127,7 +124,6 @@ public class ConsultationDto {
 //        }else {
 //            consultation_time = LocalDateTime.parse(rs.getString("consultation_time"));
 //        }
-
 
         consultation_status = rs.getString("consultation_status");
         consultation_diagnosis = rs.getString("consultation_diagnosis");
@@ -139,7 +135,6 @@ public class ConsultationDto {
     @Override
     public String toString() {
         return "ConsultationDto{" +
-                "consultation_id=" + consultation_id +
                 ", doctor_id=" + doctor_id +
                 ", patient_id=" + patient_id +
                 ", consultation_request_time=" + consultation_request_time +

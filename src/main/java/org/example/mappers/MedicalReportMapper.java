@@ -1,8 +1,6 @@
 package org.example.mappers;
 
-import org.example.dto.DoctorDto;
 import org.example.dto.MedicalReportDto;
-import org.example.models.Doctor;
 import org.example.models.MedicalReport;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;

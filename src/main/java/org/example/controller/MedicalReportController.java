@@ -2,7 +2,9 @@ package org.example.controller;
 
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.*;
+import org.example.dao.ConsultationDao;
 import org.example.dao.MedicalReportDao;
+import org.example.dto.ConsultationDto;
 import org.example.dto.MedicalReporFilterDto;
 import org.example.dto.MedicalReportDto;
 import org.example.exceptions.DataNotFoundException;
@@ -44,7 +46,8 @@ public class MedicalReportController {
     // GET MedicalReport BY ID
     @GET
     @Path("/{medical_report_id}")
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, "text/csv"})
+    @Produces({//MediaType.APPLICATION_XML,
+            MediaType.APPLICATION_JSON, "text/csv"})
     public Response selectMedicalReportById(@PathParam("medical_report_id") int medical_report_id) throws SQLException, ClassNotFoundException {
         try {
             MedicalReport medicalReport = medicalReportDao.selectMedicalReportById(medical_report_id);
@@ -121,5 +124,18 @@ public class MedicalReportController {
             throw new RuntimeException(e);
         }
     }
+
+    @GET
+    @Path("/PATIENTS/{patient_id}/CONSULTATIONS")
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, "text/csv"})
+    public Response getConsultationsByPatientId(@PathParam("patient_id") int patient_id) throws SQLException, ClassNotFoundException {
+        ArrayList<ConsultationDto> consultationDtos = medicalReportDao.getConsultationsByPatientId(patient_id);
+        if (consultationDtos.isEmpty()) {
+            return Response.status(Response.Status.NOT_FOUND).entity("No consultations found for the patient").build();
+        }
+        GenericEntity<ArrayList<ConsultationDto>> consultationDtos1 = new GenericEntity<ArrayList<ConsultationDto>>(consultationDtos) {};
+        return Response.ok(consultationDtos1).build();
+    }
+
 
 }

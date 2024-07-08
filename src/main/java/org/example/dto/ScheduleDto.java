@@ -32,6 +32,11 @@ public class ScheduleDto {
         this.schedule_is_available = schedule_is_available;
     }
 
+    public ScheduleDto(int doctor_id, boolean schedule_is_available) {
+        this.doctor_id = doctor_id;
+        this.schedule_is_available = schedule_is_available;
+    }
+
     public int getSchedule_id() {
         return schedule_id;
     }

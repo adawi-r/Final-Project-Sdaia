@@ -34,10 +34,10 @@ public class Schedule {
         this.schedule_is_available = schedule_is_available;
     }
 
-    public Schedule(int doctor_id, boolean schedule_is_available) {
-        this.doctor_id = doctor_id;
-        this.schedule_is_available = schedule_is_available;
-    }
+//    public Schedule(int doctor_id, boolean schedule_is_available) {
+//        this.doctor_id = doctor_id;
+//        this.schedule_is_available = schedule_is_available;
+//    }
 
     public Schedule(ResultSet rs) throws SQLException {
 

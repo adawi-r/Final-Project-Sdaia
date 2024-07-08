@@ -2,17 +2,17 @@ package org.example.dao;
 
 import org.example.db.MCPConnection;
 import org.example.dto.DoctorDto;
+import org.example.dto.DoctorDtoAll;
 import org.example.dto.DoctorFilterDto;
-import org.example.models.Consultation;
 import org.example.models.Doctor;
 
 import java.sql.*;
 import java.util.ArrayList;
 
+
 public class DoctorDao {
 
-    // Data URL
-//    private static final String URL = "jdbc:sqlite:C:\\Users\\dev\\Desktop\\Final_ProjectV1\\FinalDataV4.db";
+
 
     //Requirements
     private static final String SELECT_ALL_DOCTOR = "select * from DOCTORS";
@@ -48,14 +48,14 @@ public class DoctorDao {
 //
 
     // SELECT_ONE_DOCTOR
-    public Doctor selectDoctorById(int doctor_id) throws SQLException, ClassNotFoundException {
+    public DoctorDto selectDoctorById(int doctor_id) throws SQLException, ClassNotFoundException {
 //        Class.forName("org.sqlite.JDBC");
         Connection conn = MCPConnection.getConn();
         PreparedStatement st = conn.prepareStatement(SELECT_ONE_DOCTOR);
         st.setInt(1, doctor_id);
         ResultSet rs = st.executeQuery();
         if (rs.next()) {
-            return new Doctor(rs);
+            return new DoctorDto(rs);
         } else {
             return null;
         }
@@ -90,16 +90,16 @@ public class DoctorDao {
 
 
     //REGISTER NEW DOCTOR
-    public void registerDoctor(DoctorDto doctorDto) throws SQLException, ClassNotFoundException {
+    public void registerDoctor(DoctorDtoAll doctorDtoAll) throws SQLException, ClassNotFoundException {
 //        Class.forName("org.sqlite.JDBC");
         Connection conn = MCPConnection.getConn();
         PreparedStatement st = conn.prepareStatement(INSERT_DOCTOR_REGISTER);
 //        st.setInt(1, d.getDoctor_id());
-        st.setString(1, doctorDto.getDoctor_name());
-        st.setString(2, doctorDto.getDoctor_specialty());
-        st.setString(3, doctorDto.getDoctor_email());
-        st.setString(4, doctorDto.getDoctor_password());
-        st.setString(5, doctorDto.getDoctor_phone());
+        st.setString(1, doctorDtoAll.getDoctor_name());
+        st.setString(2, doctorDtoAll.getDoctor_specialty());
+        st.setString(3, doctorDtoAll.getDoctor_email());
+        st.setString(4, doctorDtoAll.getDoctor_password());
+        st.setString(5, doctorDtoAll.getDoctor_phone());
 
         st.executeUpdate();
     }
@@ -120,16 +120,16 @@ public class DoctorDao {
     }
 
     //    update
-    public void updateDoctor(DoctorDto doctorDto) throws SQLException, ClassNotFoundException {
+    public void updateDoctor(DoctorDtoAll doctorDtoAll) throws SQLException, ClassNotFoundException {
 //        Class.forName("org.sqlite.JDBC");
         Connection conn = MCPConnection.getConn();
         PreparedStatement st = conn.prepareStatement(UPDATE_DOCTOR);
-        st.setString(1, doctorDto.getDoctor_name());
-        st.setString(2, doctorDto.getDoctor_specialty());
-        st.setString(3, doctorDto.getDoctor_email());
-        st.setString(4, doctorDto.getDoctor_password());
-        st.setString(5, doctorDto.getDoctor_phone());
-        st.setInt(6, doctorDto.getDoctor_id());
+        st.setString(1, doctorDtoAll.getDoctor_name());
+        st.setString(2, doctorDtoAll.getDoctor_specialty());
+        st.setString(3, doctorDtoAll.getDoctor_email());
+        st.setString(4, doctorDtoAll.getDoctor_password());
+        st.setString(5, doctorDtoAll.getDoctor_phone());
+        st.setInt(6, doctorDtoAll.getDoctor_id());
         st.executeUpdate();
     }
 

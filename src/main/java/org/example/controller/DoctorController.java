@@ -2,11 +2,10 @@ package org.example.controller;
 
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.*;
-import org.example.dao.ConsultationDao;
 import org.example.dao.DoctorDao;
 import org.example.dto.DoctorDto;
+import org.example.dto.DoctorDtoAll;
 import org.example.dto.DoctorFilterDto;
-import org.example.dto.RateDto;
 import org.example.exceptions.DataNotFoundException;
 import org.example.mappers.DoctorMapper;
 import org.example.models.Doctor;
@@ -19,8 +18,9 @@ import java.util.ArrayList;
 @Path("/DOCTORS")
 public class DoctorController {
 
+
     DoctorDao doctorDao = new DoctorDao();
-    DoctorDto doctorDto = new DoctorDto();
+    DoctorDtoAll doctorDtoAll = new DoctorDtoAll();
 
     @Context UriInfo uriInfo;
     @Context HttpHeaders headers;
@@ -31,11 +31,11 @@ public class DoctorController {
     //REGISTER NEW DOCTOR
     @POST
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, "text/csv"})
-    public Response registerDoctor(DoctorDto doctorDto) throws SQLException,ClassNotFoundException {
+    public Response registerDoctor(DoctorDtoAll doctorDtoAll) throws SQLException,ClassNotFoundException {
         try {
 //            Doctor doctor = DoctorMapper.INSTANCE.toDoctorModel(doctorDto);
-            doctorDao.registerDoctor(doctorDto);
-            URI uri = uriInfo.getAbsolutePathBuilder().path(doctorDto.getDoctor_id() + "").build();
+            doctorDao.registerDoctor(doctorDtoAll);
+            URI uri = uriInfo.getAbsolutePathBuilder().path(doctorDtoAll.getDoctor_id() + "").build();
             return Response.created(uri).build();
 
         } catch (SQLException | ClassNotFoundException e) {
@@ -53,8 +53,8 @@ public class DoctorController {
             if (doctor == null) {
                 throw new DataNotFoundException("Invalid email or password");
             }
-            doctorDto = DoctorMapper.INSTANCE.toDoctorDto(doctor);
-            return Response.ok(doctorDto).build();
+            doctorDtoAll = DoctorMapper.INSTANCE.toDoctorDto(doctor);
+            return Response.ok(doctorDtoAll).build();
         } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
@@ -84,6 +84,8 @@ public class DoctorController {
 
             return Response
                     .ok(doctorDtos, MediaType.APPLICATION_JSON)
+                    .header("Access-Control-Allow-Origin", "*")
+                    .header("Access-Control-Allow-Methods", "GET,POST,PUT")
                     .build();
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -107,16 +109,17 @@ public class DoctorController {
     //GET DOCTOR BY ID
     @GET
     @Path("{doctor_id}")
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, "text/csv"})
+    @Produces({//MediaType.APPLICATION_XML,
+            MediaType.APPLICATION_JSON, "text/csv"})
     public Response selectDoctor(@PathParam("doctor_id") int doctor_id) throws SQLException,ClassNotFoundException {
         try {
-            Doctor doctor = doctorDao.selectDoctorById(doctor_id);
-            if (doctor == null) {
+            DoctorDto doctorDto = doctorDao.selectDoctorById(doctor_id);
+            if (doctorDto == null) {
                 throw new DataNotFoundException("Doctor " + doctor_id + " not found");
             }
 
-            DoctorDto doctorDto = DoctorMapper.INSTANCE.toDoctorDto(doctor);
-            addLinks(doctorDto);
+//            doctorDtoAll = DoctorMapper.INSTANCE.toDoctorDto(doctor);
+//            addLinks(doctorDto);
 
             return Response.ok(doctorDto).build();
         } catch (SQLException | ClassNotFoundException e) {
@@ -128,11 +131,11 @@ public class DoctorController {
     @PUT
     @Path("{doctor_id}")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, "text/csv"})
-    public void updateDoctor(@PathParam("doctor_id") int doctor_id, DoctorDto doctorDto) throws SQLException, ClassNotFoundException {
+    public void updateDoctor(@PathParam("doctor_id") int doctor_id, DoctorDtoAll doctorDtoAll) throws SQLException, ClassNotFoundException {
 
         try {
-            doctorDto.setDoctor_id(doctor_id);
-            doctorDao.updateDoctor(doctorDto);
+            doctorDtoAll.setDoctor_id(doctor_id);
+            doctorDao.updateDoctor(doctorDtoAll);
         } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
@@ -306,7 +309,7 @@ public class DoctorController {
 
 
         // Helper method to add links to DoctorDto
-        private void addLinks (DoctorDto dto){
+        private void addLinks (DoctorDtoAll dto){
             URI selfUri = uriInfo.getAbsolutePath();
             URI doctorsUri = uriInfo.getAbsolutePathBuilder().path(DoctorController.class).build();
             dto.addLink(selfUri.toString(), "self");

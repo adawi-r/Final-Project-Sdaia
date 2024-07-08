@@ -1,5 +1,6 @@
 package org.example.dao;
 
+import org.example.dto.ConsultationDto;
 import org.example.dto.MedicalReporFilterDto;
 import org.example.dto.MedicalReportDto;
 import org.example.models.MedicalReport;
@@ -17,10 +18,11 @@ public class MedicalReportDao {
     private static final String SELECT_ONE_MEDICAL_REPORT = "select * from MEDICAL_REPORTS where medical_report_id = ?";
 
     //• Doctor search patients’ medical records
-    private static final String SELECT_MEDICAL_REPORTS_BY_PATIENT = "SELECT * FROM MEDICAL_REPORTS WHERE patient_id = ?";
+    private static final String SELECT_MEDICAL_REPORTS_BY_PATIENT = "SELECT * FROM CONSULTATIONS WHERE " +
+            "patient_id = ?";
 
     //• Patient can request a medical history report for all previously recorded diagnosis
-    private static final String SELECT_MEDICAL_REPORT_BY_DETAILS= "select * from MEDICAL_REPORTS where medical_report_details = ?";
+//    private static final String SELECT_MEDICAL_REPORT_BY_DETAILS= "select * from MEDICAL_REPORTS where medical_report_details = ?";
 
     private static final String INSERT_MEDICAL_REPORT = "INSERT INTO MEDICAL_REPORTS (patient_id, medical_report_details, medical_report_report_date) VALUES (?, ?, ?)";
 
@@ -68,10 +70,11 @@ public class MedicalReportDao {
             st = conn.prepareStatement(SELECT_MEDICAL_REPORTS_BY_PATIENT);
             st.setInt(1, filter.getPatient_id());
         }
-        else if(filter.getMedical_report_details() != null) {
-            st = conn.prepareStatement(SELECT_MEDICAL_REPORT_BY_DETAILS);
-            st.setString(1, filter.getMedical_report_details());
-        }else {
+//        else if(filter.getMedical_report_details() != null) {
+//            st = conn.prepareStatement(SELECT_MEDICAL_REPORT_BY_DETAILS);
+//            st.setString(1, filter.getMedical_report_details());
+//        }
+     else {
             st = conn.prepareStatement(SELECT_ALL_MEDICAL_REPORT);
         }
         ResultSet rs = st.executeQuery();
@@ -107,6 +110,25 @@ public class MedicalReportDao {
         st.setInt(4, medicalReportDto.getMedical_report_id());
 
         st.executeUpdate();
+    }
+
+
+    // Add your connection details and initialization here
+
+    public ArrayList<ConsultationDto> getConsultationsByPatientId(int patient_id) throws SQLException, ClassNotFoundException {
+        ArrayList<ConsultationDto> consultationDtos = new ArrayList<>();
+
+          Connection conn = MCPConnection.getConn();
+          PreparedStatement st = conn.prepareStatement(SELECT_MEDICAL_REPORTS_BY_PATIENT);
+
+            st.setInt(1, patient_id);
+            try (ResultSet rs = st.executeQuery()) {
+                while (rs.next()) {
+                    ConsultationDto consultationDto = new ConsultationDto(rs);
+                    consultationDtos.add(consultationDto);
+                }
+            }
+        return consultationDtos;
     }
 
 

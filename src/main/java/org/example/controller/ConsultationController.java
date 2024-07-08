@@ -5,6 +5,7 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.*;
 import org.example.dao.ConsultationDao;
 import org.example.dto.ConsultationDto;
+import org.example.dto.ConsultationDtoAll;
 import org.example.dto.ConsultationFilterDto;
 import org.example.exceptions.DataNotFoundException;
 import org.example.mappers.ConsultationMapper;
@@ -19,7 +20,7 @@ import java.util.ArrayList;
 public class ConsultationController {
 
     ConsultationDao consultationDao = new ConsultationDao();
-    ConsultationDto consultationDto = new ConsultationDto();
+    ConsultationDtoAll consultationDtoAll = new ConsultationDtoAll();
 
     @Context
     UriInfo uriInfo;
@@ -110,12 +111,12 @@ public Response getAllConsults(
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, "text/csv"})
     public Response selectConsultationById(@PathParam("consultation_id") int consultation_id) throws SQLException, ClassNotFoundException {
         try {
-            Consultation consultation = consultationDao.selectConsultationById(consultation_id);
-            if (consultation == null) {
+            ConsultationDto consultationDto = consultationDao.selectConsultationById(consultation_id);
+            if (consultationDto == null) {
                 throw new DataNotFoundException("Consultation with ID " + consultation_id + " not found");
             }
 
-           consultationDto = ConsultationMapper.INSTANCE.toConsultationDto(consultation);
+//           consultationDtoAll = ConsultationMapper.INSTANCE.toConsultationDto(consultation);
 
             return Response.ok(consultationDto).build();
         } catch (SQLException | ClassNotFoundException e) {
@@ -126,13 +127,15 @@ public Response getAllConsults(
     //Insert Consultation
     @POST
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, "text/csv"})
-    public Response InsertConsultation(ConsultationDto consultationDto) throws SQLException, ClassNotFoundException {
+    public Response InsertConsultation(ConsultationDtoAll consultationDtoAll) throws SQLException, ClassNotFoundException {
         try {
-//            Consultation consultation = ConsultationMapper.INSTANCE.toConsultationModel(consultationDto);
+            Consultation consultation = ConsultationMapper.INSTANCE.toConsultationModel(consultationDtoAll);
 
-            consultationDao.InsertConsultation(consultationDto);
+            consultationDao.InsertConsultation(consultation);
 
-            URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(consultationDto.getConsultation_id())).build();
+            ConsultationDtoAll consultationDtoAll1 = ConsultationMapper.INSTANCE.toConsultationDto(consultation);
+
+            URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(consultationDtoAll1.getConsultation_id())).build();
             return Response.created(uri).build();
 
         } catch (ClassNotFoundException | SQLException e) {
@@ -144,11 +147,11 @@ public Response getAllConsults(
     @PUT
     @Path("{consultation_id}")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, "text/csv"})
-    public void updateConsultation(@PathParam("consultation_id") int consultation_id, ConsultationDto consultationDto) throws SQLException, ClassNotFoundException {
+    public void updateConsultation(@PathParam("consultation_id") int consultation_id, ConsultationDtoAll consultationDtoAll) throws SQLException, ClassNotFoundException {
 
         try {
-            consultationDto.setConsultation_id(consultation_id);
-            consultationDao.updateConsultation(consultationDto);
+            consultationDtoAll.setConsultation_id(consultation_id);
+            consultationDao.updateConsultation(consultationDtoAll);
 
         } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
