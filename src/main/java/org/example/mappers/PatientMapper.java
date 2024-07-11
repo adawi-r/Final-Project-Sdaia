@@ -1,6 +1,7 @@
 package org.example.mappers;
 
 import org.example.dto.PatientDto;
+import org.example.dto.PatientDtoAll;
 import org.example.models.Patient;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
@@ -10,7 +11,10 @@ public interface PatientMapper {
 
     PatientMapper INSTANCE = Mappers.getMapper(PatientMapper.class);
 
-    PatientDto toPatientDto(Patient patient);
+    PatientDtoAll toPatientDto(Patient patient);
 
-    Patient toPatientModel(PatientDto patientDto);
+    Patient toPatientModel(PatientDtoAll patientDtoAll);
+
+    PatientDto toPatientDtop(Patient patient);
+
 }

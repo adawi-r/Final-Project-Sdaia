@@ -20,7 +20,7 @@ public class ConsultationDto {
     private String consultation_status;
     private String consultation_diagnosis;
     private int consultation_rating;
-    private ArrayList <LinkDto> links = new ArrayList<>();
+//    private ArrayList <LinkDto> links = new ArrayList<>();
 
     public ConsultationDto() {
     }
@@ -100,16 +100,16 @@ public class ConsultationDto {
 
     @XmlElementWrapper
     @XmlElement(name = "link")
-    public ArrayList<LinkDto> getLinks() {
-        return links;
-    }
+//    public ArrayList<LinkDto> getLinks() {
+//        return links;
+//    }
 
     // XmlElement(name = "link")
     public void addLink(String url, String rel) {
         LinkDto link = new LinkDto();
         link.setLink(url);
         link.setRel(rel);
-        links.add(link);
+//        links.add(link);
     }
 
     public ConsultationDto(ResultSet rs) throws SQLException {

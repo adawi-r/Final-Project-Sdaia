@@ -6,10 +6,10 @@ import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.UriInfo;
 import org.example.dao.PatientDao;
 import org.example.dto.PatientDto;
+import org.example.dto.PatientDtoAll;
 import org.example.exceptions.DataNotFoundException;
 import org.example.mappers.PatientMapper;
 import org.example.models.Patient;
-import org.example.models.Schedule;
 
 import java.sql.SQLException;
 import java.net.URI;
@@ -31,12 +31,12 @@ public class PatientController {
     // REGISTER NEW PATIENT
     @POST
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, "text/csv"})
-    public Response registerPatient(PatientDto patientDto) throws SQLException {
+    public Response registerPatient(PatientDtoAll patientDtoAll) throws SQLException {
         try {
-            Patient patient = PatientMapper.INSTANCE.toPatientModel(patientDto);
+            Patient patient = PatientMapper.INSTANCE.toPatientModel(patientDtoAll);
 
             patientDao.insertPatient(patient);
-            URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(patientDto.getPatient_id())).build();
+            URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(patientDtoAll.getPatient_id())).build();
             return Response.created(uri).build();
 
         } catch (ClassNotFoundException | SQLException e) {
@@ -54,10 +54,10 @@ public class PatientController {
             if (patient == null) {
                 throw new DataNotFoundException("Invalid email or password");
             }
-            PatientDto patientDto = PatientMapper.INSTANCE.toPatientDto(patient);
+            PatientDtoAll patientDtoAll = PatientMapper.INSTANCE.toPatientDto(patient);
 
 
-            return Response.ok(patientDto).build();
+            return Response.ok(patientDtoAll).build();
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
@@ -70,7 +70,10 @@ public class PatientController {
     public Response selectAllPatient() throws SQLException, ClassNotFoundException{
         try {
             GenericEntity<ArrayList<PatientDto>> patientDtos = new GenericEntity<ArrayList<PatientDto>>(patientDao.selectAllPatients(patientDto)) {};
-            return Response.ok(patientDtos, MediaType.APPLICATION_JSON).build();
+            return Response.ok(patientDtos, MediaType.APPLICATION_JSON)
+                    .header("Access-Control-Allow-Origin", "*")
+                    .header("Access-Control-Allow-Methods", "GET,POST,PUT")
+                    .build();
         } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
@@ -88,7 +91,7 @@ public class PatientController {
                 throw new DataNotFoundException("Patient with ID " + patient_id + " not found");
             }
 
-            PatientDto patientDto = PatientMapper.INSTANCE.toPatientDto(patient);
+            PatientDto patientDto = PatientMapper.INSTANCE.toPatientDtop(patient);
 
             return Response.ok(patientDto).build();
         } catch (SQLException |ClassNotFoundException e) {
@@ -100,11 +103,11 @@ public class PatientController {
     @PUT
     @Path("{patient_id}")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, "text/csv"})
-    public void updatePatient(@PathParam("patient_id") int patient_id, PatientDto patientDto) throws SQLException, ClassNotFoundException {
+    public void updatePatient(@PathParam("patient_id") int patient_id, PatientDtoAll patientDtoAll) throws SQLException, ClassNotFoundException {
 
         try {
-            patientDto.setPatient_id(patient_id);
-            patientDao.updatePatient(patientDto);
+            patientDtoAll.setPatient_id(patient_id);
+            patientDao.updatePatient(patientDtoAll);
         } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }

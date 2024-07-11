@@ -1,7 +1,7 @@
 package org.example.dao;
 
 import org.example.db.MCPConnection;
-import org.example.dto.ScheduleDto;
+import org.example.dto.ScheduleDtoAll;
 
 import org.example.dto.ScheduleFilterDto;
 import org.example.models.Schedule;
@@ -62,7 +62,7 @@ public class ScheduleDao {
 
     //select many things
 
-    public ArrayList<ScheduleDto> selectAllSchedules(ScheduleFilterDto filter) throws SQLException, ClassNotFoundException {
+    public ArrayList<ScheduleDtoAll> selectAllSchedules(ScheduleFilterDto filter) throws SQLException, ClassNotFoundException {
 //        Class.forName("org.sqlite.JDBC");
         Connection conn = MCPConnection.getConn();
         PreparedStatement st;
@@ -83,36 +83,36 @@ public class ScheduleDao {
             st = conn.prepareStatement(SELECT_ALL_SCHEDULE);
         }
         ResultSet rs = st.executeQuery();
-        ArrayList<ScheduleDto> scheduleDtos = new ArrayList<>();
+        ArrayList<ScheduleDtoAll> scheduleDtoAlls = new ArrayList<>();
         while (rs.next()) {
-            scheduleDtos.add(new ScheduleDto(rs));
+            scheduleDtoAlls.add(new ScheduleDtoAll(rs));
         }
 
-        return scheduleDtos;
+        return scheduleDtoAlls;
     }
 
 
     //Insert Schedule
-    public void InsertSchedule(ScheduleDto scheduleDtos) throws SQLException, ClassNotFoundException {
+    public void InsertSchedule(ScheduleDtoAll scheduleDtosAll) throws SQLException, ClassNotFoundException {
 //        Class.forName("org.sqlite.JDBC");
         Connection conn = MCPConnection.getConn();
         PreparedStatement st = conn.prepareStatement(INSERT_SCHEDULE);
-        st.setInt(1, scheduleDtos.getDoctor_id());
-        st.setString(2, scheduleDtos.getSchedule_start_time().toString());
-        st.setString(3, scheduleDtos.getSchedule_end_time().toString());
-        st.setBoolean(4, scheduleDtos.getSchedule_is_available());
+        st.setInt(1, scheduleDtosAll.getDoctor_id());
+        st.setString(2, scheduleDtosAll.getSchedule_start_time().toString());
+        st.setString(3, scheduleDtosAll.getSchedule_end_time().toString());
+        st.setBoolean(4, scheduleDtosAll.getSchedule_is_available());
         st.executeUpdate();
     }
 
 //    update
-public void updateSchedule(ScheduleDto scheduleDto) throws SQLException, ClassNotFoundException {
+public void updateSchedule(ScheduleDtoAll scheduleDtoAll) throws SQLException, ClassNotFoundException {
 //    Class.forName("org.sqlite.JDBC");
     Connection conn = MCPConnection.getConn();
     PreparedStatement st = conn.prepareStatement(UPDATE_SCHEDULES);
-    st.setInt(4, scheduleDto.getSchedule_id());
-    st.setString(1, scheduleDto.getSchedule_start_time().toString());
-    st.setString(2, scheduleDto.getSchedule_end_time().toString());
-    st.setBoolean(3, scheduleDto.getSchedule_is_available());
+    st.setInt(4, scheduleDtoAll.getSchedule_id());
+    st.setString(1, scheduleDtoAll.getSchedule_start_time().toString());
+    st.setString(2, scheduleDtoAll.getSchedule_end_time().toString());
+    st.setBoolean(3, scheduleDtoAll.getSchedule_is_available());
     st.executeUpdate();
 }
 

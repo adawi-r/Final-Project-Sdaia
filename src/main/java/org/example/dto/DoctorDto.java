@@ -14,7 +14,7 @@ public class DoctorDto {
     private int doctor_id;
     private String doctor_name;
     private String doctor_specialty;
-    private ArrayList<LinkDto> links = new ArrayList<>();
+//    private ArrayList<LinkDto> links = new ArrayList<>();
 
     public DoctorDto() {
     }
@@ -52,16 +52,16 @@ public class DoctorDto {
 
     @XmlElementWrapper
     @XmlElement(name = "link")
-    public ArrayList<LinkDto> getLinks() {
-        return links;
-    }
+//    public ArrayList<LinkDto> getLinks() {
+//        return links;
+//    }
 
     // XmlElement(name = "link")
     public void addLink(String url, String rel) {
         LinkDto link = new LinkDto();
         link.setLink(url);
         link.setRel(rel);
-        links.add(link);
+//        links.add(link);
     }
 
     public DoctorDto(ResultSet rs) throws SQLException {

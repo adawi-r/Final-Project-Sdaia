@@ -88,6 +88,8 @@ public class MedicalReportController {
             }
             return Response
                     .ok(medicalReportDtos, MediaType.APPLICATION_JSON)
+                    .header("Access-Control-Allow-Origin", "*")
+                    .header("Access-Control-Allow-Methods", "GET,POST,PUT")
                     .build();
         } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
@@ -125,17 +127,17 @@ public class MedicalReportController {
         }
     }
 
-    @GET
-    @Path("/PATIENTS/{patient_id}/CONSULTATIONS")
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, "text/csv"})
-    public Response getConsultationsByPatientId(@PathParam("patient_id") int patient_id) throws SQLException, ClassNotFoundException {
-        ArrayList<ConsultationDto> consultationDtos = medicalReportDao.getConsultationsByPatientId(patient_id);
-        if (consultationDtos.isEmpty()) {
-            return Response.status(Response.Status.NOT_FOUND).entity("No consultations found for the patient").build();
-        }
-        GenericEntity<ArrayList<ConsultationDto>> consultationDtos1 = new GenericEntity<ArrayList<ConsultationDto>>(consultationDtos) {};
-        return Response.ok(consultationDtos1).build();
-    }
+//    @GET
+//    @Path("/PATIENTS/{patient_id}/CONSULTATIONS")
+//    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, "text/csv"})
+//    public Response getConsultationsByPatientId(@PathParam("patient_id") int patient_id) throws SQLException, ClassNotFoundException {
+//        ArrayList<ConsultationDto> consultationDtos = medicalReportDao.getConsultationsByPatientId(patient_id);
+//        if (consultationDtos.isEmpty()) {
+//            return Response.status(Response.Status.NOT_FOUND).entity("No consultations found for the patient").build();
+//        }
+//        GenericEntity<ArrayList<ConsultationDto>> consultationDtos1 = new GenericEntity<ArrayList<ConsultationDto>>(consultationDtos) {};
+//        return Response.ok(consultationDtos1).build();
+//    }
 
 
 }

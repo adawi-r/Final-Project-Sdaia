@@ -18,7 +18,7 @@ public class MedicalReportDto {
     private int patient_id;
     private String medical_report_details;
     private LocalDateTime medical_report_report_date;
-    private ArrayList<LinkDto> links = new ArrayList<>();
+//    private ArrayList<LinkDto> links = new ArrayList<>();
 
     public MedicalReportDto() {
     }
@@ -64,16 +64,16 @@ public class MedicalReportDto {
 
     @XmlElementWrapper
     @XmlElement(name = "link")
-    public ArrayList<LinkDto> getLinks() {
-        return links;
-    }
+//    public ArrayList<LinkDto> getLinks() {
+//        return links;
+//    }
 
     // XmlElement(name = "link")
     public void addLink(String url, String rel) {
         LinkDto link = new LinkDto();
         link.setLink(url);
         link.setRel(rel);
-        links.add(link);
+//        links.add(link);
     }
 
     public MedicalReportDto(ResultSet rs) throws SQLException {

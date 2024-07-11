@@ -182,26 +182,26 @@ public class DoctorController {
 //        return Response.ok(doctor).build();
 //    }
 
-    @GET
-    @Path("/available")
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, "text/csv"})
-    public Response getAvailableDoctors(@QueryParam("schedule_is_available") boolean schedule_is_available) {
-        try {
-            ArrayList<DoctorDto> doctorDtos = doctorDao.getAvailableDoctors(schedule_is_available);
-
-            GenericEntity<ArrayList<DoctorDto>> doctorDto = new GenericEntity<ArrayList<DoctorDto>>(doctorDtos) {
-            };
-            if (headers.getAcceptableMediaTypes().contains(MediaType.valueOf(MediaType.APPLICATION_XML))) {
-                return Response.ok(doctorDto).type(MediaType.APPLICATION_XML).build();
-            } else if (headers.getAcceptableMediaTypes().contains(MediaType.valueOf("text/csv"))) {
-                return Response.ok(doctorDto).type("text/csv").build();
-            } else {
-                return Response.ok(doctorDto, MediaType.APPLICATION_JSON).build();
-            }
-        } catch (SQLException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-    }
+//    @GET
+//    @Path("/available")
+//    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, "text/csv"})
+//    public Response getAvailableDoctors(@QueryParam("schedule_is_available") boolean schedule_is_available) {
+//        try {
+//            ArrayList<DoctorDto> doctorDtos = doctorDao.getAvailableDoctors(schedule_is_available);
+//
+//            GenericEntity<ArrayList<DoctorDto>> doctorDto = new GenericEntity<ArrayList<DoctorDto>>(doctorDtos) {
+//            };
+//            if (headers.getAcceptableMediaTypes().contains(MediaType.valueOf(MediaType.APPLICATION_XML))) {
+//                return Response.ok(doctorDto).type(MediaType.APPLICATION_XML).build();
+//            } else if (headers.getAcceptableMediaTypes().contains(MediaType.valueOf("text/csv"))) {
+//                return Response.ok(doctorDto).type("text/csv").build();
+//            } else {
+//                return Response.ok(doctorDto, MediaType.APPLICATION_JSON).build();
+//            }
+//        } catch (SQLException | ClassNotFoundException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
 
 // Doctor Rate
     @GET

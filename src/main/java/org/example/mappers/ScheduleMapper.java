@@ -1,6 +1,6 @@
 package org.example.mappers;
 
-import org.example.dto.ScheduleDto;
+import org.example.dto.ScheduleDtoAll;
 import org.example.models.Schedule;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
@@ -10,7 +10,7 @@ public interface ScheduleMapper {
 
     ScheduleMapper INSTANCE = Mappers.getMapper(ScheduleMapper.class);
 
-    ScheduleDto toScheduleDto(Schedule schedule);
+    ScheduleDtoAll toScheduleDto(Schedule schedule);
 
-    Schedule toScheduleModel(ScheduleDto scheduleDto);
+    Schedule toScheduleModel(ScheduleDtoAll scheduleDtoAll);
 }

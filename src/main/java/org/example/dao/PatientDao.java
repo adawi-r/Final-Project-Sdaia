@@ -2,7 +2,7 @@ package org.example.dao;
 
 import org.example.db.MCPConnection;
 import org.example.dto.PatientDto;
-import org.example.models.Consultation;
+import org.example.dto.PatientDtoAll;
 import org.example.models.Patient;
 
 import java.sql.*;
@@ -47,11 +47,11 @@ public class PatientDao {
     }
 
 //    select one patient
-    public Patient selectPatient(int patientId) throws SQLException, ClassNotFoundException {
+    public Patient selectPatient(int patient_id) throws SQLException, ClassNotFoundException {
 //        Class.forName("org.sqlite.JDBC");
         Connection conn = MCPConnection.getConn();
         PreparedStatement st = conn.prepareStatement(SELECT_ONE_PATIEN);
-        st.setInt(1, patientId);
+        st.setInt(1, patient_id);
         ResultSet rs = st.executeQuery();
         if (rs.next()) {
             return new Patient(rs);
@@ -91,16 +91,16 @@ public class PatientDao {
     }
 
 //    update Patient
-    public void updatePatient(PatientDto patientDto) throws SQLException, ClassNotFoundException {
+    public void updatePatient(PatientDtoAll patientDtoAll) throws SQLException, ClassNotFoundException {
 //        Class.forName("org.sqlite.JDBC");
         Connection conn = MCPConnection.getConn();
         PreparedStatement st = conn.prepareStatement(UPDATE_PATIEN);
-        st.setString(1, patientDto.getPatient_name());
-        st.setString(2, patientDto.getPatient_email());
-        st.setString(3, patientDto.getPatient_password());
-        st.setString(4, patientDto.getPatient_phone());
-        st.setString(5, patientDto.getPatient_birth_date().toString());
-        st.setInt(6, patientDto.getPatient_id());
+        st.setString(1, patientDtoAll.getPatient_name());
+        st.setString(2, patientDtoAll.getPatient_email());
+        st.setString(3, patientDtoAll.getPatient_password());
+        st.setString(4, patientDtoAll.getPatient_phone());
+        st.setString(5, patientDtoAll.getPatient_birth_date().toString());
+        st.setInt(6, patientDtoAll.getPatient_id());
         st.executeUpdate();
     }
 

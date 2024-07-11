@@ -18,8 +18,7 @@ public class MedicalReportDao {
     private static final String SELECT_ONE_MEDICAL_REPORT = "select * from MEDICAL_REPORTS where medical_report_id = ?";
 
     //• Doctor search patients’ medical records
-    private static final String SELECT_MEDICAL_REPORTS_BY_PATIENT = "SELECT * FROM CONSULTATIONS WHERE " +
-            "patient_id = ?";
+    private static final String SELECT_MEDICAL_REPORTS_BY_PATIENT = "SELECT * FROM MEDICAL_REPORTS WHERE patient_id = ?";
 
     //• Patient can request a medical history report for all previously recorded diagnosis
 //    private static final String SELECT_MEDICAL_REPORT_BY_DETAILS= "select * from MEDICAL_REPORTS where medical_report_details = ?";
@@ -115,21 +114,21 @@ public class MedicalReportDao {
 
     // Add your connection details and initialization here
 
-    public ArrayList<ConsultationDto> getConsultationsByPatientId(int patient_id) throws SQLException, ClassNotFoundException {
-        ArrayList<ConsultationDto> consultationDtos = new ArrayList<>();
-
-          Connection conn = MCPConnection.getConn();
-          PreparedStatement st = conn.prepareStatement(SELECT_MEDICAL_REPORTS_BY_PATIENT);
-
-            st.setInt(1, patient_id);
-            try (ResultSet rs = st.executeQuery()) {
-                while (rs.next()) {
-                    ConsultationDto consultationDto = new ConsultationDto(rs);
-                    consultationDtos.add(consultationDto);
-                }
-            }
-        return consultationDtos;
-    }
+//    public ArrayList<ConsultationDto> getConsultationsByPatientId(int patient_id) throws SQLException, ClassNotFoundException {
+//        ArrayList<ConsultationDto> consultationDtos = new ArrayList<>();
+//
+//          Connection conn = MCPConnection.getConn();
+//          PreparedStatement st = conn.prepareStatement(SELECT_MEDICAL_REPORTS_BY_PATIENT);
+//
+//            st.setInt(1, patient_id);
+//            try (ResultSet rs = st.executeQuery()) {
+//                while (rs.next()) {
+//                    ConsultationDto consultationDto = new ConsultationDto(rs);
+//                    consultationDtos.add(consultationDto);
+//                }
+//            }
+//        return consultationDtos;
+//    }
 
 
 //

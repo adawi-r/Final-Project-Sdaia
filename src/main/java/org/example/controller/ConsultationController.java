@@ -98,7 +98,10 @@ public Response getAllConsults(
 
         return Response
                 .ok(consultationDto, MediaType.APPLICATION_JSON)
+                .header("Access-Control-Allow-Origin", "*")
+                .header("Access-Control-Allow-Methods", "GET,POST,PUT")
                 .build();
+
     } catch (SQLException | ClassNotFoundException e) {
         throw new RuntimeException(e);
     }

@@ -70,13 +70,20 @@ public class DoctorDao {
         if (filter.getDoctor_id() != null) {
             st = conn.prepareStatement(SELECT_ONE_DOCTOR);
             st.setInt(1, filter.getDoctor_id());
-        } else if (filter.getDoctor_name() != null) {
+        }
+        else if (filter.getDoctor_name() != null) {
             st = conn.prepareStatement(SELECT_ONE_BY_NAME);
             st.setString(1, filter.getDoctor_name());
-        } else if (filter.getDoctor_specialty() != null) {
+        }
+        else if (filter.getDoctor_specialty() != null) {
             st = conn.prepareStatement(SELECT_ONE_BY_SPECIALTY);
             st.setString(1, filter.getDoctor_specialty());
-        } else {
+        }
+        else if (filter.getSchedule_is_available() != null) {
+            st = conn.prepareStatement(SCHEDULE_AVAILABILITY_BY_DOCTOR);
+            st.setBoolean(1, filter.getSchedule_is_available());
+        }
+        else {
             st = conn.prepareStatement(SELECT_ALL_DOCTOR);
         }
         ResultSet rs = st.executeQuery();
@@ -134,28 +141,28 @@ public class DoctorDao {
     }
 
 
-    // doctor info based on availablity
-    public ArrayList<DoctorDto> getAvailableDoctors(boolean schedule_is_available) throws SQLException, ClassNotFoundException {
-        ArrayList<DoctorDto> doctorDtos = new ArrayList<>();
-
-        Connection conn = MCPConnection.getConn();
-        PreparedStatement st = conn.prepareStatement(SCHEDULE_AVAILABILITY_BY_DOCTOR);
-
-        st.setBoolean(1, schedule_is_available);
-
-        try (ResultSet resultSet = st.executeQuery()) {
-            while (resultSet.next()) {
-                DoctorDto doctorDto = new DoctorDto(
-                        resultSet.getInt("doctor_id"),
-                        resultSet.getString("doctor_name"),
-                        resultSet.getString("doctor_specialty")
-                );
-                doctorDtos.add(doctorDto);
-            }
-        }
-
-        return doctorDtos;
-    }
+//    // doctor info based on availablity
+//    public ArrayList<DoctorDto> getAvailableDoctors(boolean schedule_is_available) throws SQLException, ClassNotFoundException {
+//        ArrayList<DoctorDto> doctorDtos = new ArrayList<>();
+//
+//        Connection conn = MCPConnection.getConn();
+//        PreparedStatement st = conn.prepareStatement(SCHEDULE_AVAILABILITY_BY_DOCTOR);
+//
+//        st.setBoolean(1, schedule_is_available);
+//
+//        try (ResultSet resultSet = st.executeQuery()) {
+//            while (resultSet.next()) {
+//                DoctorDto doctorDto = new DoctorDto(
+//                        resultSet.getInt("doctor_id"),
+//                        resultSet.getString("doctor_name"),
+//                        resultSet.getString("doctor_specialty")
+//                );
+//                doctorDtos.add(doctorDto);
+//            }
+//        }
+//
+//        return doctorDtos;
+//    }
 
     // doctor info based on RATE
     public ArrayList<DoctorDto> getRateDoctors(int consultation_rating) throws SQLException, ClassNotFoundException {
