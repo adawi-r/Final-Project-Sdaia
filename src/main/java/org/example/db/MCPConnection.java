@@ -6,7 +6,7 @@ import java.sql.SQLException;
 
 public class MCPConnection {
 
-    private static final String URL = "jdbc:sqlite:C:\\Users\\dev\\Desktop\\Final_ProjectV1\\FinalDataV4.db";
+    private static final String URL = "jdbc:sqlite:C:\\Users\\dev\\Desktop\\Final_ProjectV1\\finalProject1.db";
 
     public static Connection getConn() throws ClassNotFoundException, SQLException {
 

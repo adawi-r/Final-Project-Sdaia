@@ -57,7 +57,7 @@ public class ScheduleDtoAll {
     }
 
     public void setSchedule_start_time(LocalDateTime schedule_start_time) {
-        this.schedule_start_time = schedule_start_time;
+        this.schedule_start_time = LocalDateTime.now();
     }
 
     public LocalDateTime getSchedule_end_time() {
@@ -65,7 +65,7 @@ public class ScheduleDtoAll {
     }
 
     public void setSchedule_end_time(LocalDateTime schedule_end_time) {
-        this.schedule_end_time = schedule_end_time;
+        this.schedule_end_time = LocalDateTime.now();
     }
 
     public boolean getSchedule_is_available() {
